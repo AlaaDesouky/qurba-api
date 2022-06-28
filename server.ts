@@ -1,8 +1,11 @@
 import './config/dotenv.config'
+import { initDb } from './datastore'
 
 (async () => {
   try {
     // TODO: Connect to database
+    await initDb()
+    console.log('DB connected successfully')
 
     // Initialize new express app
     const App = require('./app').default
