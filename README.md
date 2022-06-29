@@ -14,7 +14,7 @@
     * updateRestaurantByID [patch]: ~/:id
     * deleteRestaurantById [delete]: ~/id
     
-   * user: ~/user
-      * getUserByFavCuisine [get]: ~/:cuisine
+  * user: ~/user
+     * getUserByFavCuisine [get]: ~/:cuisine
     
     
