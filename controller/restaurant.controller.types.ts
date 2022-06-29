@@ -9,7 +9,7 @@ export interface listRestaurantsResponse {
 //-- get restaurant functionality types --//
 export type getRestaurantRequest = {}
 export interface getRestaurantResponse {
-  success: boolean, message: string, data: Restaurant
+  success: boolean, data: Restaurant
 }
 
 //-- create restaurant functionality types --//

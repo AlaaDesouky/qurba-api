@@ -3,7 +3,7 @@ import { BadRequestError, NotFoundError } from '../errors'
 import { StatusCodes } from 'http-status-codes'
 import { checkPermission, slugify } from '../utils'
 import { ExpressHandler } from '../types'
-import { createRestaurantsRequest, createRestaurantsResponse, deleteRestaurantsRequest, deleteRestaurantsResponse, updateRestaurantsRequest, updateRestaurantsResponse } from './restaurant.controller.types'
+import { createRestaurantsRequest, createRestaurantsResponse, deleteRestaurantsRequest, deleteRestaurantsResponse, getRestaurantRequest, getRestaurantResponse, updateRestaurantsRequest, updateRestaurantsResponse } from './restaurant.controller.types'
 
 // List all restaurant
 export const listRestaurants = async (req, res) => {
@@ -11,8 +11,14 @@ export const listRestaurants = async (req, res) => {
 }
 
 // Get restaurant by id | slug
-export const getRestaurantById = async (req, res) => {
-  res.send('get restaurant')
+export const getRestaurantById: ExpressHandler<getRestaurantRequest, getRestaurantResponse> = async (req, res) => {
+  const { id: _id } = req.params
+
+  const restaurantExists = await RestaurantModel.findOne({ _id })
+  if (!restaurantExists) {
+    throw new NotFoundError(`No restaurant found with ${_id}`)
+  }
+  res.status(StatusCodes.OK).json({ success: true, data: restaurantExists })
 }
 
 // Create new restaurant
@@ -39,17 +45,16 @@ export const createRestaurant: ExpressHandler<createRestaurantsRequest, createRe
 
 // Update restaurant
 export const updateRestaurant: ExpressHandler<updateRestaurantsRequest, updateRestaurantsResponse> = async (req, res) => {
-  const { slug, id: _id } = req.params
-  const query = _id | slug
+  const { id: _id } = req.params
   const { name, cuisine, location } = req.body
   if (!name || !cuisine || !location) {
     throw new BadRequestError('Please provide all values')
   }
 
   // Check if restaurant exists
-  const restaurant = await RestaurantModel.findOne({ query })
+  const restaurant = await RestaurantModel.findOne({ _id })
   if (!restaurant) {
-    throw new NotFoundError(`No restaurant found with ${query}`)
+    throw new NotFoundError(`No restaurant found with ${_id}`)
   }
 
   // Check permission
@@ -67,13 +72,12 @@ export const updateRestaurant: ExpressHandler<updateRestaurantsRequest, updateRe
 
 // Delete restaurant
 export const deleteRestaurant: ExpressHandler<deleteRestaurantsRequest, deleteRestaurantsResponse> = async (req, res) => {
-  const { slug, id: _id } = req.params
-  const query = _id | slug
+  const { id: _id } = req.params
 
   // Check if restaurant exists
-  const restaurant = await RestaurantModel.findOne({ query })
+  const restaurant = await RestaurantModel.findOne({ _id })
   if (!restaurant) {
-    throw new NotFoundError(`No restaurant found with ${query}`)
+    throw new NotFoundError(`No restaurant found with ${_id}`)
   }
 
   // Check permission
