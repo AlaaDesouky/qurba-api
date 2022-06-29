@@ -19,7 +19,7 @@ export interface Restaurant {
   name: string,
   slug: string,
   cuisine: string[],
-  location?: {
+  location: {
     type: string,
     coordinates: [lng: number, lat: number]
   }
@@ -29,7 +29,7 @@ export interface Restaurant {
 
 // Custom type to handle requests and responses
 export type ExpressHandler<Req, Res> = RequestHandler<
-  string,
+  any,
   Partial<Res>,
   Partial<Req>,
   any
