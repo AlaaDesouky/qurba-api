@@ -29,3 +29,9 @@ export type deleteRestaurantsRequest = {}
 export interface deleteRestaurantsResponse {
   success: boolean, message: string
 }
+
+//-- get nearby restaurants --//
+export type getNearbyRestaurantRequest = {}
+export interface getNearbyRestaurantResponse {
+  success: boolean, count: number, data: Restaurant[] | []
+}

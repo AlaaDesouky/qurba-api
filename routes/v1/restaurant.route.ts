@@ -1,4 +1,4 @@
-import { createRestaurant, deleteRestaurant, getRestaurantById, listRestaurants, updateRestaurant } from '../../controller'
+import { createRestaurant, deleteRestaurant, getNearbyRestaurants, getRestaurantById, listRestaurants, updateRestaurant } from '../../controller'
 import { Router } from 'express'
 import * as asyncHandler from 'express-async-handler'
 import { authMiddleware } from '../../middleware/auth.middleware'
@@ -9,9 +9,12 @@ router.route('/')
   .get(asyncHandler(listRestaurants)) // Public route
   .post(authMiddleware, asyncHandler(createRestaurant)) // Private route
 
+router.route('/nearby').get(asyncHandler(getNearbyRestaurants))
+
 router.route('/:id')
   .get(asyncHandler(getRestaurantById)) // Public route
   .patch(authMiddleware, asyncHandler(updateRestaurant)) // Private route
   .delete(authMiddleware, asyncHandler(deleteRestaurant)) // Private route
+
 
 export default router

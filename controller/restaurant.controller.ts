@@ -87,3 +87,16 @@ export const deleteRestaurant: ExpressHandler<deleteRestaurantsRequest, deleteRe
   await restaurant.remove()
   res.status(StatusCodes.OK).json({ success: true, message: 'Restaurant delete successfully' })
 }
+
+// Get nearby restaurants
+export const getNearbyRestaurants: ExpressHandler<getRestaurantRequest, any> = async (req, res) => {
+  const { lng, lat, distance } = req.query
+  // calculate radius by dividing distance / Earth radius in KM
+  const radius = distance / 6378
+
+  const restaurants = await RestaurantModel.find({
+    location: { $geoWithin: { $centerSphere: [[lng, lat], radius] } }
+  })
+
+  res.status(StatusCodes.OK).json({ success: true, count: restaurants.length, data: restaurants })
+}
