@@ -32,3 +32,6 @@ export type ExpressHandler<Req, Res> = RequestHandler<
   Partial<Req>,
   any
 >;
+
+// Jwt object type
+export type JwtObject = { sub: string, email: string }
