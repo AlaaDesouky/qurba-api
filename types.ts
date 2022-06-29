@@ -1,3 +1,5 @@
+import { RequestHandler } from 'express'
+
 export interface User {
   id: string,
   email: string,
@@ -22,3 +24,11 @@ export interface Restaurant {
   }
   userId: string
 }
+
+// Custom type to handle requests and responses
+export type ExpressHandler<Req, Res> = RequestHandler<
+  string,
+  Partial<Res>,
+  Partial<Req>,
+  any
+>;
