@@ -10,7 +10,8 @@ export interface User {
   location: {
     type: string,
     coordinates: [lng: number, lat: number]
-  }
+  },
+  createdAt: Date
 }
 
 export interface Restaurant {
@@ -22,7 +23,8 @@ export interface Restaurant {
     type: string,
     coordinates: [lng: number, lat: number]
   }
-  userId: string
+  createdAt: Date,
+  createdBy: User
 }
 
 // Custom type to handle requests and responses

@@ -32,7 +32,7 @@ const UserSchema = new Schema<User>({
     type: {
       type: String,
       enum: ["Point"],
-      require: true
+      required: true
     },
     coordinates: {
       type: [Number],
@@ -40,6 +40,10 @@ const UserSchema = new Schema<User>({
       min: 2,
       max: 2,
     }
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
   }
 })
 
