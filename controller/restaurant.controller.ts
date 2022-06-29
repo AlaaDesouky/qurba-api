@@ -3,11 +3,16 @@ import { BadRequestError, NotFoundError } from '../errors'
 import { StatusCodes } from 'http-status-codes'
 import { checkPermission, slugify } from '../utils'
 import { ExpressHandler } from '../types'
-import { createRestaurantsRequest, createRestaurantsResponse, deleteRestaurantsRequest, deleteRestaurantsResponse, getRestaurantRequest, getRestaurantResponse, updateRestaurantsRequest, updateRestaurantsResponse } from './restaurant.controller.types'
+import { createRestaurantsRequest, createRestaurantsResponse, deleteRestaurantsRequest, deleteRestaurantsResponse, getRestaurantRequest, getRestaurantResponse, listRestaurantsRequest, listRestaurantsResponse, updateRestaurantsRequest, updateRestaurantsResponse } from './restaurant.controller.types'
 
-// List all restaurant
-export const listRestaurants = async (req, res) => {
-  res.send('list restaurants')
+// List all restaurant with filtering url?cuisine[in]=italian
+export const listRestaurants: ExpressHandler<listRestaurantsRequest, any> = async (req, res) => {
+  let query;
+  let queryStr = JSON.stringify(req.query)
+  queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `${match}`)
+  query = RestaurantModel.find(JSON.parse(queryStr))
+  const restaurants = await query
+  res.status(StatusCodes.OK).json({ success: true, count: restaurants.length, data: restaurants })
 }
 
 // Get restaurant by id | slug

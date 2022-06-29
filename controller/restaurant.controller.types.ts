@@ -3,7 +3,7 @@ import { Restaurant } from '../types'
 //-- List restaurant functionality types --//
 export type listRestaurantsRequest = {}
 export interface listRestaurantsResponse {
-  success: boolean, message: string, data: Restaurant[]
+  success: boolean, count: number, data: Restaurant[]
 }
 
 //-- get restaurant functionality types --//
