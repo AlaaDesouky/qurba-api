@@ -3,7 +3,7 @@ import { initDb } from './datastore'
 
 (async () => {
   try {
-    // TODO: Connect to database
+    // Connect to database
     await initDb()
     console.log('DB connected successfully')
 

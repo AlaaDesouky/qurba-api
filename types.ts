@@ -1,17 +1,24 @@
 export interface User {
   id: string,
   email: string,
+  password: string,
   fullName: string,
   favCuisine: string[],
   restaurants: string[],
-  location: string
+  location: {
+    type: string,
+    coordinates: [lng: number, lat: number]
+  }
 }
 
-export interface restaurant {
+export interface Restaurant {
   id: string,
   name: string,
-  codename: string,
+  slug: string,
   cuisine: string[],
-  location: string,
+  location?: {
+    type: string,
+    coordinates: [lng: number, lat: number]
+  }
   userId: string
 }
