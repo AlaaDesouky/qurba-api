@@ -1,7 +1,7 @@
 import RestaurantModel from '../datastore/model/Restaurant.model'
 import { BadRequestError, NotFoundError } from '../errors'
 import { StatusCodes } from 'http-status-codes'
-import { slugify } from '../utils'
+import { checkPermission, slugify } from '../utils'
 import { ExpressHandler } from '../types'
 import { createRestaurantsRequest, createRestaurantsResponse, deleteRestaurantsRequest, deleteRestaurantsResponse, updateRestaurantsRequest, updateRestaurantsResponse } from './restaurant.controller.types'
 
@@ -29,12 +29,9 @@ export const createRestaurant: ExpressHandler<createRestaurantsRequest, createRe
     throw new BadRequestError('Restaurant already exists')
   }
 
-  // TODO: Validate user
-  // req.body.createdBy = req.user.sub
-
   // Create new restaurant
   const restaurant = await RestaurantModel
-    .create({ name, cuisine, location, slug })
+    .create({ name, cuisine, location, slug, createdBy: res.locals.user.id })
 
   // Return restaurant
   return res.status(StatusCodes.CREATED).json({ success: true, message: 'Restaurant added successfully', data: restaurant })
@@ -55,7 +52,8 @@ export const updateRestaurant: ExpressHandler<updateRestaurantsRequest, updateRe
     throw new NotFoundError(`No restaurant found with ${query}`)
   }
 
-  // TODO: Check permission
+  // Check permission
+  checkPermission(res.locals.user.id, restaurant.createdBy.id)
 
   // Update restaurant
   const updatedRestaurant = await RestaurantModel.findOneAndUpdate({ _id },
@@ -78,7 +76,8 @@ export const deleteRestaurant: ExpressHandler<deleteRestaurantsRequest, deleteRe
     throw new NotFoundError(`No restaurant found with ${query}`)
   }
 
-  // TODO: Check permission
+  // Check permission
+  checkPermission(res.locals.user.id, restaurant.createdBy.id)
 
   // Remove restaurant
   await restaurant.remove()
