@@ -10,4 +10,8 @@ export class JwtUtils {
       environment.jwtAccessTokenSecret,
       { expiresIn: environment.jwtExpiresIn })
   }
+
+  static verifyAccessToken(accessToken: string) {
+    return jwt.verify(accessToken, environment.jwtAccessTokenSecret)
+  }
 }
