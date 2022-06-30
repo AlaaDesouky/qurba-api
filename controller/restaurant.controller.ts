@@ -4,12 +4,13 @@ import { StatusCodes } from 'http-status-codes'
 import { checkPermission, slugify } from '../utils'
 import { ExpressHandler } from '../types'
 import { createRestaurantsRequest, createRestaurantsResponse, deleteRestaurantsRequest, deleteRestaurantsResponse, getRestaurantRequest, getRestaurantResponse, listRestaurantsRequest, listRestaurantsResponse, updateRestaurantsRequest, updateRestaurantsResponse } from './restaurant.controller.types'
+import { Types } from 'mongoose'
 
 // List all restaurant with filtering url?cuisine[in]=italian
 export const listRestaurants: ExpressHandler<listRestaurantsRequest, any> = async (req, res) => {
   let query;
   let queryStr = JSON.stringify(req.query)
-  queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `${match}`)
+  queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`)
   query = RestaurantModel.find(JSON.parse(queryStr))
   const restaurants = await query
   res.status(StatusCodes.OK).json({ success: true, count: restaurants.length, data: restaurants })
@@ -17,11 +18,11 @@ export const listRestaurants: ExpressHandler<listRestaurantsRequest, any> = asyn
 
 // Get restaurant by id | slug
 export const getRestaurantById: ExpressHandler<getRestaurantRequest, getRestaurantResponse> = async (req, res) => {
-  const { id: _id } = req.params
-
-  const restaurantExists = await RestaurantModel.findOne({ _id })
+  const { id } = req.params
+  let queryOptions = Types.ObjectId.isValid(id) ? { _id: id } : { slug: id }
+  const restaurantExists = await RestaurantModel.findOne({ ...queryOptions })
   if (!restaurantExists) {
-    throw new NotFoundError(`No restaurant found with ${_id}`)
+    throw new NotFoundError(`No restaurant found with ${id}`)
   }
   res.status(StatusCodes.OK).json({ success: true, data: restaurantExists })
 }
@@ -50,23 +51,24 @@ export const createRestaurant: ExpressHandler<createRestaurantsRequest, createRe
 
 // Update restaurant
 export const updateRestaurant: ExpressHandler<updateRestaurantsRequest, updateRestaurantsResponse> = async (req, res) => {
-  const { id: _id } = req.params
+  const { id } = req.params
+  let queryOptions = Types.ObjectId.isValid(id) ? { _id: id } : { slug: id }
   const { name, cuisine, location } = req.body
   if (!name || !cuisine || !location) {
     throw new BadRequestError('Please provide all values')
   }
 
   // Check if restaurant exists
-  const restaurant = await RestaurantModel.findOne({ _id })
+  const restaurant = await RestaurantModel.findOne({ ...queryOptions })
   if (!restaurant) {
-    throw new NotFoundError(`No restaurant found with ${_id}`)
+    throw new NotFoundError(`No restaurant found with ${id}`)
   }
 
   // Check permission
   checkPermission(res.locals.user.id, restaurant.createdBy.id)
 
   // Update restaurant
-  const updatedRestaurant = await RestaurantModel.findOneAndUpdate({ _id },
+  const updatedRestaurant = await RestaurantModel.findOneAndUpdate({ ...queryOptions },
     req.body, { new: true, runValidators: true })
 
   // Return updated restaurant
@@ -77,12 +79,13 @@ export const updateRestaurant: ExpressHandler<updateRestaurantsRequest, updateRe
 
 // Delete restaurant
 export const deleteRestaurant: ExpressHandler<deleteRestaurantsRequest, deleteRestaurantsResponse> = async (req, res) => {
-  const { id: _id } = req.params
+  const { id } = req.params
+  let queryOptions = Types.ObjectId.isValid(id) ? { _id: id } : { slug: id }
 
   // Check if restaurant exists
-  const restaurant = await RestaurantModel.findOne({ _id })
+  const restaurant = await RestaurantModel.findOne({ ...queryOptions })
   if (!restaurant) {
-    throw new NotFoundError(`No restaurant found with ${_id}`)
+    throw new NotFoundError(`No restaurant found with ${id}`)
   }
 
   // Check permission
