@@ -8,7 +8,8 @@ export const getUsersByFavCuisine: ExpressHandler<any, any> = async (req, res) =
   const { cuisine } = req.params
   // TODO: Associate users and restaurants
   const matchedUsers = await UserModel.aggregate([
-    { $match: { favCuisine: { $eq: cuisine } } }
+    { $match: { favCuisine: { $eq: cuisine } } },
+    { $project: { "password" : 0}}
   ])
 
   res.status(StatusCodes.OK).json({ success: true, data: matchedUsers })
