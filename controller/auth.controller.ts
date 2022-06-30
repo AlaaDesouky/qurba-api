@@ -5,12 +5,12 @@ import { ExpressHandler, User } from '../types'
 import { JwtUtils, PasswordUtils } from '../utils'
 
 // Register functionality types
-type RegisterRequest = Pick<User, 'email' | 'password'>
+type RegisterRequest = Pick<User, 'email' | 'password' | 'favCuisine'>
 interface ResisterResponse { success: boolean, message: string, access_token: string }
 
 export const register: ExpressHandler<RegisterRequest, ResisterResponse> = async (req, res) => {
   // Get the email and password form the body
-  const { email, password } = req.body
+  const { email, password, favCuisine } = req.body
   if (!email || !password) {
     throw new BadRequestError('Please provide all fields')
   }
@@ -23,7 +23,7 @@ export const register: ExpressHandler<RegisterRequest, ResisterResponse> = async
 
   // If the user does not exist hash the password and create a new user
   const passwordHash = await PasswordUtils.hashPassword(password)
-  const newUser: User = await UserModel.create({ email, password: passwordHash })
+  const newUser: User = await UserModel.create({ email, password: passwordHash, favCuisine })
 
   // Generate jwt access token
   const access_token = JwtUtils.generateAccessToken({ sub: newUser.id, email })
