@@ -8,11 +8,12 @@
 
    * restaurants: ~/restaurant
       * listRestaurants [get]: ~/
+      * filterRestaurants [get]: ~?cuisine[in]=
       * creatRestaurant [post]: ~/
       * getNearByRestaurants [get]: ~/nearby?len=&lat=&distance=
-      * getRestaurantById [get]: ~/:id
-      * updateRestaurantByID [patch]: ~/:id
-      * deleteRestaurantById [delete]: ~/id
+      * getRestaurantById|Slug [get]: ~/:id
+      * updateRestaurantByID|Slug [patch]: ~/:id
+      * deleteRestaurantById|Slug [delete]: ~/id
 
     * user: ~/user
        * getUserByFavCuisine [get]: ~/:cuisine
