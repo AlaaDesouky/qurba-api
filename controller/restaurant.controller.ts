@@ -9,7 +9,7 @@ import { createRestaurantsRequest, createRestaurantsResponse, deleteRestaurantsR
 export const listRestaurants: ExpressHandler<listRestaurantsRequest, any> = async (req, res) => {
   let query;
   let queryStr = JSON.stringify(req.query)
-  queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `${match}`)
+  queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`)
   query = RestaurantModel.find(JSON.parse(queryStr))
   const restaurants = await query
   res.status(StatusCodes.OK).json({ success: true, count: restaurants.length, data: restaurants })
